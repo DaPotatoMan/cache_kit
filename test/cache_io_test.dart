@@ -1,3 +1,6 @@
+@TestOn('vm')
+library;
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -113,6 +116,31 @@ void main() {
       expect(await avatars.contains('user-1'), isFalse);
       expect(await documents.contains('user-1'), isTrue);
       expect(await documents.get('user-1'), Uint8List.fromList([2]));
+    });
+
+    test('returns the total stored byte size', () async {
+      final cache = _cache();
+
+      expect(await cache.getStoreSize(), 0);
+
+      await cache.set('first', Uint8List.fromList([1, 2, 3]));
+      await cache.set('second', Uint8List.fromList([4, 5]));
+
+      expect(await cache.getStoreSize(), 5);
+
+      await cache.set('first', Uint8List.fromList([6]));
+
+      expect(await cache.getStoreSize(), 3);
+    });
+
+    test('returns zero size after clearing the store', () async {
+      final cache = _cache();
+
+      await cache.set('first', Uint8List.fromList([1, 2, 3]));
+      await cache.set('second', Uint8List.fromList([4, 5]));
+      await cache.deleteAll();
+
+      expect(await cache.getStoreSize(), 0);
     });
 
     test('stores encrypted bytes on disk', () async {

@@ -17,5 +17,11 @@ void main() {
         returnsNormally,
       );
     });
+
+    test('exposes store size lookup', () {
+      final cache = CacheKit(encryption: const BaseCacheEncryption());
+
+      expect(cache.getStoreSize, isA<Future<int> Function()>());
+    });
   });
 }

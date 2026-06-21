@@ -37,6 +37,9 @@ abstract class BaseCache {
   /// Clears the cache store
   Future<void> deleteAll();
 
+  /// Returns the full size of the store (in bytes)
+  Future<int> getStoreSize();
+
   /// Closes the cache store and releases all resources
   void dispose();
 }

@@ -21,6 +21,7 @@ class CacheKit {
   late final renameKey = _cache.renameKey;
   late final delete = _cache.delete;
   late final deleteAll = _cache.deleteAll;
+  late final getStoreSize = _cache.getStoreSize;
 
   void dispose() {
     _encryption.dispose();

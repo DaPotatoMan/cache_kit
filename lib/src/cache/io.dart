@@ -86,5 +86,19 @@ class Cache extends BaseCache {
   }
 
   @override
+  Future<int> getStoreSize() async {
+    final dir = await _getCacheDir();
+    int size = 0;
+
+    await for (final entity in dir.list()) {
+      if (entity is File) {
+        size += await entity.length();
+      }
+    }
+
+    return size;
+  }
+
+  @override
   void dispose() {}
 }

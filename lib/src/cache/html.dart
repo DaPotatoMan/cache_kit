@@ -109,6 +109,21 @@ class Cache extends BaseCache {
   }
 
   @override
+  Future<int> getStoreSize() async {
+    final (transaction, store) = await _db.getStore('readonly');
+    final values = await store.getAll();
+    await transaction.completed;
+
+    return values.fold<int>(
+      0,
+      (size, value) => switch (value) {
+        Uint8List() => size + value.lengthInBytes,
+        _ => size,
+      },
+    );
+  }
+
+  @override
   Future<void> renameKey(String key, String newKey) async {
     if (key == newKey) return;
 

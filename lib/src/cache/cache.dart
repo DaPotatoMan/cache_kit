@@ -5,7 +5,7 @@ import 'stub.dart';
 class Cache extends BaseCache {
   Cache({super.storeName, required super.encryption});
 
-  static final _error = UnimplementedError('CacheKit: not supported in this platform');
+  final _error = UnimplementedError('CacheKit: not supported in this platform');
 
   @override
   Future<void> set(String key, Uint8List value) => throw _error;
@@ -24,6 +24,9 @@ class Cache extends BaseCache {
 
   @override
   Future<void> renameKey(String key, String newKey) => throw _error;
+
+  @override
+  Future<int> getStoreSize() => throw _error;
 
   @override
   void dispose() => throw _error;
