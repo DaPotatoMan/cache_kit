@@ -2,3 +2,15 @@ include: package:flutter_lints/flutter.yaml
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
+
+analyzer:
+  language:
+    strict-raw-types: true
+
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.mapper.dart"
+
+formatter:
+  page_width: 132
+  trailing_commas: preserve
