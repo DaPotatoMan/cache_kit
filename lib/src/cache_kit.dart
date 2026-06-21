@@ -2,8 +2,8 @@ import 'package:cache_kit/src/encryption/encryption.dart';
 
 import 'cache/cache.dart'
     if (dart.library.io) 'cache/io.dart'
-    if (dart.library.js_interop) 'cache/html.dart'
-    if (dart.library.html) 'cache/html.dart';
+    if (dart.library.js_interop) 'cache/web.dart'
+    if (dart.library.html) 'cache/web.dart';
 
 class CacheKit {
   CacheKit({

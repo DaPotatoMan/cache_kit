@@ -3,13 +3,13 @@ library;
 
 import 'dart:typed_data';
 
-import 'package:cache_kit/src/cache/html.dart' as html_cache;
+import 'package:cache_kit/src/cache/web.dart' as web;
 import 'package:cache_kit/src/encryption/encryption.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Web Cache', () {
-    late html_cache.Cache cache;
+    late web.Cache cache;
 
     setUp(() {
       cache = _cache();
@@ -43,8 +43,8 @@ void main() {
   });
 }
 
-html_cache.Cache _cache() {
-  return html_cache.Cache(
+web.Cache _cache() {
+  return web.Cache(
     storeName: 'cache_kit_web_test_${DateTime.now().microsecondsSinceEpoch}',
     encryption: const BaseCacheEncryption(),
   );
