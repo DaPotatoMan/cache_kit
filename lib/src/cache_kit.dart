@@ -1,4 +1,5 @@
 import 'package:cache_kit/src/encryption/encryption.dart';
+import 'package:cache_kit/src/utils/utils.dart';
 
 import 'cache/cache.dart'
     if (dart.library.io) 'cache/io.dart'
@@ -22,6 +23,9 @@ class CacheKit {
   late final delete = _cache.delete;
   late final deleteAll = _cache.deleteAll;
   late final getStoreSize = _cache.getStoreSize;
+
+  DownloadTask download(Uri uri, {DownloadTaskParams? params}) =>
+      DownloadTask(uri: uri, cache: _cache, params: params ?? DownloadTaskParams());
 
   void dispose() {
     _encryption.dispose();
