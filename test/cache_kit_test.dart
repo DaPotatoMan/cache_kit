@@ -1,5 +1,4 @@
 import 'package:cache_kit/cache_kit.dart';
-import 'package:cache_kit/src/encryption/encryption.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
