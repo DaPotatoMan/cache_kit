@@ -6,7 +6,11 @@ import 'package:cache_kit/src/encryption/encryption.dart';
 import 'package:cache_kit/src/utils/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'utils/utils.dart';
+
 void main() {
+  initTest();
+
   group('DownloadTask', () {
     test('exposes a Future result and completes from cache', () async {
       final bytes = Uint8List.fromList([1, 2, 3]);

@@ -10,38 +10,14 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'utils/utils.dart';
+
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  const pathProviderChannel = MethodChannel('plugins.flutter.io/path_provider');
-  late Directory cacheRoot;
-
-  setUp(() async {
-    cacheRoot = await Directory.systemTemp.createTemp('cache_kit_test_');
-
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-      pathProviderChannel,
-      (methodCall) async {
-        if (methodCall.method == 'getApplicationCacheDirectory') {
-          return cacheRoot.path;
-        }
-
-        return null;
-      },
-    );
-  });
-
-  tearDown(() async {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(pathProviderChannel, null);
-
-    if (await cacheRoot.exists()) {
-      await cacheRoot.delete(recursive: true);
-    }
-  });
+  initTest();
 
   File storedFile({required String storeName, required String key}) {
     final fileName = sha256.convert(utf8.encode(key)).toString();
-    return File('${cacheRoot.path}/$storeName/$fileName');
+    return File('${FakePathProvider.rootFolderName}/app_cache/$storeName/$fileName');
   }
 
   group('IO Cache', () {
@@ -121,6 +97,7 @@ void main() {
     test('returns the total stored byte size', () async {
       final cache = _cache();
 
+      await cache.deleteAll();
       expect(await cache.getStoreSize(), 0);
 
       await cache.set('first', Uint8List.fromList([1, 2, 3]));

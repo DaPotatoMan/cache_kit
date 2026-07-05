@@ -1,7 +1,11 @@
 import 'package:cache_kit/cache_kit.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'utils/utils.dart';
+
 void main() {
+  initTest();
+
   group('CacheKit', () {
     test('accepts custom store names', () {
       expect(
