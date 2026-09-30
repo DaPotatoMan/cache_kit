@@ -16,5 +16,33 @@ void main() {
       expect(key.url, 'https://example.com/image.png');
       expect(key.scale, 2);
     });
+
+    test('accepts asynchronously resolved headers', () async {
+      final provider = CachedNetworkImage(
+        'https://example.com/image.png',
+        CacheKit(),
+        headersResolver: (url) async {
+          expect(url, Uri.parse('https://example.com/image.png'));
+          return const {'Authorization': 'Bearer token'};
+        },
+      );
+
+      expect(
+        await provider.headersResolver!(Uri.parse(provider.url)),
+        const {'Authorization': 'Bearer token'},
+      );
+    });
+
+    test('does not allow static and resolved headers together', () {
+      expect(
+        () => CachedNetworkImage(
+          'https://example.com/image.png',
+          CacheKit(),
+          headers: const {'Accept': 'image/*'},
+          headersResolver: (_) => const {'Authorization': 'Bearer token'},
+        ),
+        throwsA(isA<AssertionError>()),
+      );
+    });
   });
 }

@@ -8,6 +8,13 @@ import 'package:flutter/painting.dart';
 // Method signature for _loadAsync decode callbacks.
 typedef _SimpleDecoderCallback = Future<ui.Codec> Function(ui.ImmutableBuffer buffer);
 
+/// Resolves the HTTP headers for an image request.
+///
+/// The resolver is called immediately before CacheKit starts a download. It
+/// can return headers synchronously or asynchronously, which is useful for
+/// refreshing an access token or creating request signatures.
+typedef ImageHeadersResolver = FutureOr<Map<String, String>?> Function(Uri url);
+
 /// An [ImageProvider] that fetches an image from a URL using [CacheKit].
 /// Copied from Flutter's [NetworkImage] class.
 ///
@@ -22,8 +29,12 @@ class CachedNetworkImage extends ImageProvider<NetworkImage> implements NetworkI
     this.cache, {
     this.scale = 1.0,
     this.headers,
+    this.headersResolver,
     this.webHtmlElementStrategy = WebHtmlElementStrategy.never,
-  });
+  }) : assert(
+         headers == null || headersResolver == null,
+         'Specify either headers or headersResolver, not both.',
+       );
 
   /// The URL from which the image will be fetched.
   @override
@@ -39,6 +50,12 @@ class CachedNetworkImage extends ImageProvider<NetworkImage> implements NetworkI
   /// HTTP headers to be included in the image request.
   @override
   final Map<String, String>? headers;
+
+  /// Resolves HTTP headers immediately before an image is downloaded.
+  ///
+  /// This is mutually exclusive with [headers]. It is not invoked when the
+  /// image is served from CacheKit's cache.
+  final ImageHeadersResolver? headersResolver;
 
   /// Strategy for handling HTML elements when running on the web.
   /// See [WebHtmlElementStrategy].
@@ -80,10 +97,12 @@ class CachedNetworkImage extends ImageProvider<NetworkImage> implements NetworkI
     try {
       assert(key == this);
 
+      final requestHeaders = await headersResolver?.call(Uri.parse(key.url)) ?? headers;
+
       final task = cache.download(
         Uri.parse(key.url),
         params: .new(
-          headers: headers,
+          headers: requestHeaders,
           onProgress: (cumulative, total, _) {
             chunkEvents.add(
               ImageChunkEvent(
@@ -101,7 +120,7 @@ class CachedNetworkImage extends ImageProvider<NetworkImage> implements NetworkI
         throw Exception('CachedNetworkImage is an empty file: ${key.url}');
       }
 
-      return decode(await ui.ImmutableBuffer.fromUint8List(bytes));
+      return await decode(await ui.ImmutableBuffer.fromUint8List(bytes));
     } catch (e) {
       // Depending on where the exception was thrown, the image cache may not
       // have had a chance to track the key in the cache at all.
